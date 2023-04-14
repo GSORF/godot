@@ -441,7 +441,7 @@ public:
 
 	Error create_nro(const String &template_path, const String &output_path, NacpStruct *nacp, String &icon_path, String &romfs_path) {
 		NroHeader nro_header;
-		AssetHeader asset_header;
+		NroAssetHeader asset_header;
 
 		FileAccess *template_f = FileAccess::open(template_path, FileAccess::READ);
 		FileAccess *nro = FileAccess::open(output_path, FileAccess::WRITE);
@@ -452,7 +452,7 @@ public:
 		template_f->seek(sizeof(NroStart));
 		template_f->get_buffer((uint8_t *)&nro_header, sizeof(NroHeader));
 
-		if (memcmp(nro_header.magic, "NRO0", 4) != 0) {
+		if (memcmp(&nro_header.magic, "NRO0", 4) != 0) {
 			template_f->close();
 			memdelete(template_f);
 			nro->close();
@@ -465,8 +465,8 @@ public:
 		copy_chunked(template_f, nro, nro_header.size);
 
 		template_f->seek(nro_header.size);
-		template_f->get_buffer((uint8_t *)&asset_header, sizeof(AssetHeader));
-		if (memcmp(asset_header.magic, "ASET", 4) != 0) {
+		template_f->get_buffer((uint8_t *)&asset_header, sizeof(NroAssetHeader));
+		if (memcmp(&asset_header.magic, "ASET", 4) != 0) {
 			template_f->close();
 			memdelete(template_f);
 			nro->close();
@@ -474,13 +474,13 @@ public:
 			return ERR_INVALID_DATA;
 		}
 
-		AssetHeader new_asset_header;
-		memset(&new_asset_header, 0, sizeof(AssetHeader));
+		NroAssetHeader new_asset_header;
+		memset(&new_asset_header, 0, sizeof(NroAssetHeader));
 
 		// write dummy asset header here
-		nro->store_buffer((uint8_t *)&new_asset_header, sizeof(AssetHeader));
+		nro->store_buffer((uint8_t *)&new_asset_header, sizeof(NroAssetHeader));
 
-		memcpy(new_asset_header.magic, "ASET", 4);
+		memcpy(&new_asset_header.magic, "ASET", 4);
 		new_asset_header.version = 0;
 		new_asset_header.icon.offset = nro->get_position() - nro_header.size;
 
@@ -524,7 +524,7 @@ public:
 
 		// Go back and actually write the asset header
 		nro->seek(nro_header.size);
-		nro->store_buffer((uint8_t *)&new_asset_header, sizeof(AssetHeader));
+		nro->store_buffer((uint8_t *)&new_asset_header, sizeof(NroAssetHeader));
 
 		template_f->close();
 		memdelete(template_f);
@@ -553,7 +553,7 @@ public:
 		}
 
 		if (version.length() != 0) {
-			strncpy(nacp->version, version_cstr, sizeof(nacp->version) - 1);
+			strncpy(nacp->display_version, version_cstr, sizeof(nacp->display_version) - 1);
 		}
 	}
 
