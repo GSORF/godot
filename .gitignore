@@ -370,3 +370,6 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 *.lnk
+
+# Switch
+/platform/switch/nacp_default.nacp
