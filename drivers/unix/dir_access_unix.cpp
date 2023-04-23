@@ -408,6 +408,9 @@ bool DirAccessUnix::is_link(String p_file) {
 }
 
 String DirAccessUnix::read_link(String p_file) {
+#ifdef HOMEBREW_NO_READ_LINK
+	return p_file;
+#else
 	if (p_file.is_rel_path())
 		p_file = get_current_dir().plus_file(p_file);
 
@@ -421,9 +424,13 @@ String DirAccessUnix::read_link(String p_file) {
 		link.parse_utf8(buf, len);
 	}
 	return link;
+#endif
 }
 
 Error DirAccessUnix::create_link(String p_source, String p_target) {
+#ifdef HOMEBREW_NO_CREATE_LINK
+	return FAILED;
+#else
 	if (p_target.is_rel_path())
 		p_target = get_current_dir().plus_file(p_target);
 
@@ -435,6 +442,7 @@ Error DirAccessUnix::create_link(String p_source, String p_target) {
 	} else {
 		return FAILED;
 	}
+#endif
 }
 
 uint64_t DirAccessUnix::get_space_left() {
