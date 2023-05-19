@@ -6,6 +6,9 @@ See the original README-original.md for info about Godot.
 ## Releases
 See [the GitHub releases page](https://github.com/Stary2001/godot/releases) for pre-built editors for Windows, macOS and Linux.
 
+## What do I need in order to test my game on a real device?
+In order to playtest your own game on a physical Switch, you need to install a custom firmware on your Switch. This will most likely only work with very old models. More recent models need to have a modchip installed which is not very beginner friendly and also comes with legal problems. Therefore, we do not encourage any of these actions.
+
 ## How do I export my game?
 The editor builds above add a `Switch` exporter to the list - it will generate a .nro and a .pck file that can be transferred to your Switch.
 If additional debugging is required, sending the nro via nxlink (make sure to send it to the right place with the -p argument) will allow the output of the console to be viewed on PC.
